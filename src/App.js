@@ -1,9 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import NavBar from './components/Navbar'
+import {DAO} from './scripts/DAO';
 
 function App() {
+
+  if(DAO.getCompetition() === undefined){
+    DAO.createCompetition('');
+  }
+
   return (
     <NavBar></NavBar>
   );
