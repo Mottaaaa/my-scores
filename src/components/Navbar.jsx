@@ -4,6 +4,7 @@ import Home from './Home';
 import Teams from './Teams';
 import Matches from './Matches';
 import { DAO } from '../scripts/DAO';
+import Scoreboard from './Scoreboard';
 
 class NavBar extends Component {
 
@@ -32,9 +33,8 @@ class NavBar extends Component {
                         <Teams />
                     </Route>
                     <Route path='/Scoreboard'>
-
+                        <Scoreboard />
                     </Route>
-
                     <Route path='/Matches'>
                         <Matches />
                     </Route>

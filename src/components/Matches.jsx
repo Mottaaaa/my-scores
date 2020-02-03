@@ -127,7 +127,8 @@ class Matches extends Component {
                             {this.renderDataTable()}
                         </tbody>
                     </table>
-                    <input type='button' onClick={this.openMatchWindow} />
+                    <br />
+                    <input type='button' onClick={this.openMatchWindow} value ='Open Match Registration Window'/>
                 </div>
             </div>
         );
