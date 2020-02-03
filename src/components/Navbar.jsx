@@ -12,7 +12,8 @@ class NavBar extends Component {
                     <header>
                         <Link to='/Home'>Home</Link>
                         <Link to='/Teams'>Teams</Link>
-                        <Link to='/Competitions'>Competitions</Link>
+                        <Link to='/Scoreboard'>Scoreboard</Link>
+                        <Link to='/Matches'>Matches</Link>
                     </header>
                 </div>
                 <Switch>
@@ -22,8 +23,12 @@ class NavBar extends Component {
                     <Route path='/Teams'>
                         <Teams></Teams>
                     </Route>
-                    <Route path='/Competitions'>
+                    <Route path='/Scoreboard'>
 
+                    </Route>
+
+                    <Route path='/Matches'>
+                        
                     </Route>
                 </Switch>
             </Router>

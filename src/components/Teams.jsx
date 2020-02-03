@@ -70,6 +70,9 @@ class Teams extends Component {
             });
         }
         DAO.save();
+        this.setState({
+            teamName: ''
+        });
     }
 
     enrollTeams() {

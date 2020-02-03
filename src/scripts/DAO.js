@@ -1,5 +1,9 @@
 var DAO = (function () {
-    let competition = {};
+    let competition = {
+        name: '',
+        teams: [],
+        rounds: []
+    };
 
     let createCompetition = function (competitionName) {
         if (competitionName !== undefined) {
@@ -16,7 +20,7 @@ var DAO = (function () {
         }
     };
 
-    let resetName = function(){
+    let resetName = function () {
         competition.name = '';
         save();
     }
@@ -28,6 +32,12 @@ var DAO = (function () {
                 visitor: teamB,
                 score: undefined
             };
+            if (competition.rounds === undefined) {
+                competition.rounds = [];
+            }
+            if (competition.rounds[round] === undefined) {
+                competition.rounds[round] = [];
+            }
             competition.rounds[round].push(match);
         }
     }
@@ -46,42 +56,58 @@ var DAO = (function () {
     };
 
     let initiateCompetition = function () {
-        if ((competition.teams.length % 2) === 0) {
-            competition.running = true;
-            let numberOfTeams = competition.teams.length;
-            let matchesPerRound = numberOfTeams / 2;
-            let numberOfRounds = (numberOfTeams - 1) * 2;
-            let midSeason = numberOfRounds / 2;
-            let teamList = competition.teams;
+        if (competition.teams !== undefined && competition.teams.length > 0) {
+            if ((competition.teams.length % 2) === 0) {
+                competition.running = true;
+                let numberOfTeams = competition.teams.length;
+                let matchesPerRound = numberOfTeams / 2;
+                let numberOfRounds = (numberOfTeams - 1) * 2;
+                let midSeason = numberOfRounds / 2;
+                let teamList = competition.teams;
+                let lastTeam = competition.teams[numberOfTeams - 1];
 
-            for (let i = 0; i < midSeason; i++) {
-                if (i === 0) {
-                    for (let j = 0; j < matchesPerRound; j++) {
-                        createMatch(i, teamList[j], teamList[matchesPerRound - j]);
-                    }
-                } else {
-                    let previousRoundLastTeam = competition.rounds[i - 1][matchesPerRound - 1].visitor;
-                    let lastTeam = teamList[numberOfTeams - 1];
-                    teamList = teamList.filter(function (value, index, arr) {
-                        return (value.name !== previousRoundLastTeam.name &&
-                            value.name !== lastTeam);
-                    });
-
-                    if ((i % 2) === 0) {
-                        createMatch(i, lastTeam, previousRoundLastTeam);
-                        teamList.unshift(lastTeam, previousRoundLastTeam);
+                for (let i = 0; i < midSeason; i++) {
+                    if (i === 0) {
+                        for (let j = 0; j < matchesPerRound; j++) {
+                            createMatch(i, teamList[j], teamList[(numberOfTeams - 1) - j]);
+                        }
                     } else {
-                        createMatch(i, previousRoundLastTeam, lastTeam);
-                        teamList.unshift(previousRoundLastTeam, lastTeam);
-                    }
-                    for (let j = 0; j < matchesPerRound - 1; j += 2) {
-                        createMatch(i, teamList[matchesPerRound - j - 1], teamList[matchesPerRound - j]);
+                        let previousRound = competition.rounds[i - 1];
+                        let previousRoundLastTeam = previousRound[matchesPerRound - 1].visitor;
+                        let temp = [];
+                        for (let match of previousRound) {
+                            temp.push(match.home);
+                            temp.push(match.visitor);
+                        }
+
+                        temp = temp.filter(function (value, index, arr) {
+                            return (value.name !== previousRoundLastTeam.name &&
+                                value.name !== lastTeam.name);
+                        });
+
+                        if ((i % 2) === 0) {
+                            createMatch(i, previousRoundLastTeam, lastTeam);
+                            temp.unshift(previousRoundLastTeam, lastTeam);
+                        } else {
+                            createMatch(i, lastTeam, previousRoundLastTeam);
+                            temp.unshift(lastTeam, previousRoundLastTeam);
+                        }
+                        for (let j = 0; j < matchesPerRound - 1; j++) {
+                            let visitor = temp.pop();
+                            let home = temp.pop();
+                            createMatch(i, home, visitor);
+                            temp.unshift(home, visitor);
+                        }
                     }
                 }
-            }
-            for (let i = midSeason; i < numberOfRounds; i++) {
-                let round = competition.rounds[i - midSeason];
-                createMatch(i, round.visitor, round.home);
+
+                for (let i = 0; i < midSeason; i++) {
+                    let roundIndex = midSeason + i;
+                    for (let j = 0; j < matchesPerRound; j++) {
+                        let round = competition.rounds[i][j];
+                        createMatch(roundIndex, round.visitor, round.home);
+                    }
+                }
             }
         }
     };
@@ -95,12 +121,16 @@ var DAO = (function () {
     };
 
     let reset = function () {
-        competition = {};
+        competition = {
+            name: '',
+            teams: [],
+            rounds: []
+        };
         save();
     }
 
     let getCompetition = function () {
-        if(competition === null){
+        if (competition === null) {
             return {};
         }
         return competition;
@@ -205,7 +235,7 @@ var DAO = (function () {
         }
     }
 
-    let isCompetitionRunning = function(){
+    let isCompetitionRunning = function () {
         return competition.running;
     }
 

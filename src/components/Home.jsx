@@ -14,10 +14,18 @@ class Home extends Component {
         this.competitionExists = this.competitionExists.bind(this);
         this.edit = this.edit.bind(this);
         this.reset = this.reset.bind(this);
+        this.start = this.start.bind(this);
     }
 
     edit(event){
         DAO.resetName();
+        this.setState({
+            competitionName: this.state.competitionName
+        });
+    }
+
+    start(event){
+        DAO.initiateCompetition();
         this.setState({
             competitionName: this.state.competitionName
         });
@@ -32,7 +40,7 @@ class Home extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        if (this.state.competitionName !== '' || this.state.competitionName !== undefined) {
+        if (this.state.competitionName !== undefined && this.state.competitionName !== '') {
             DAO.createCompetition(this.state.competitionName);
             DAO.save();
             this.setState({
@@ -61,6 +69,7 @@ class Home extends Component {
             return (
                 <div>
                     <h2>{this.state.competitionName}</h2>
+                    <input type='button' value='Start' onClick={this.start}/>
                     <input type='button' value='Edit' onClick={this.edit}/>
                     <input type='button' value='Reset' onClick={this.reset}/>
                 </div>
@@ -80,7 +89,8 @@ class Home extends Component {
         return (
             <div>
                 <header>
-                    <h1>Welcome to My Scores, Your Personal Score Manager!</h1>
+                    <h1>Welcome to My Scores</h1>
+                    <h2>Your personal score manager!</h2>
                 </header>
                 <div>
                     {this.competitionExists()}
