@@ -30,7 +30,8 @@ var DAO = (function () {
             let match = {
                 home: teamA,
                 visitor: teamB,
-                score: undefined
+                score: undefined,
+                round
             };
             if (competition.rounds === undefined) {
                 competition.rounds = [];
@@ -110,6 +111,7 @@ var DAO = (function () {
                 }
             }
         }
+        save();
     };
 
     let save = function () {
@@ -117,7 +119,10 @@ var DAO = (function () {
     };
 
     let load = function () {
-        competition = JSON.parse(localStorage.getItem("MyScore"));
+        let stored = JSON.parse(localStorage.getItem("MyScore"));
+        if (stored !== undefined && stored !== null) {
+            competition = JSON.parse(localStorage.getItem("MyScore"));
+        }
     };
 
     let reset = function () {

@@ -15,7 +15,8 @@ class Teams extends Component {
         this.renderTableData = this.renderTableData.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.isCompetitionRunning = this.isCompetitionRunning.bind(this);
+        this.hideSave = this.hideSave.bind(this);
+        this.hideAdd = this.hideAdd.bind(this);
     }
 
     componentDidMount() {
@@ -23,11 +24,24 @@ class Teams extends Component {
         this.loadTeams();
     }
 
-    isCompetitionRunning() {
+    hideSave() {
         DAO.load();
         if (!DAO.isCompetitionRunning()) {
             return (
                 <input type='button' onClick={this.enrollTeams} value='Save' />
+            );
+        }
+    }
+
+    hideAdd() {
+        DAO.load();
+        if (!DAO.isCompetitionRunning()) {
+            return (
+                <form onSubmit={this.handleSubmit}>
+                    <label>Team Name:</label>
+                    <input name='teamName' id='teamName' type='text' value={this.state.teamName} onChange={this.handleChange} />
+                    <input type='button' onClick={this.handleSubmit} value='Add Team' />
+                </form>
             );
         }
     }
@@ -85,14 +99,10 @@ class Teams extends Component {
             <div>
                 <div>
                     <header>
-                        <h1>Create a Team</h1>
+                        <h1>Teams</h1>
                     </header>
                 </div>
-                <form onSubmit={this.handleSubmit}>
-                    <label>Team Name:</label>
-                    <input name='teamName' id='teamName' type='text' value={this.state.teamName} onChange={this.handleChange} />
-                    <input type='button' onClick={this.handleSubmit} value='Add Team' />
-                </form>
+                {this.hideAdd()}
                 <div>
                     <table id="teamTable">
                         <thead>
@@ -105,7 +115,7 @@ class Teams extends Component {
                         </tbody>
                     </table>
                 </div>
-                {this.isCompetitionRunning()}
+                {this.hideSave()}
             </div>
         );
     }
