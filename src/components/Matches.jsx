@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { DAO } from '../scripts/DAO';
+import { Controller } from '../scripts/Controller';
 
 class Matches extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            rounds: [],
+            matchWeeks: [],
             childWindowUrl: 'http://localhost:8082/',
             childWindow: undefined
         };
@@ -14,11 +14,11 @@ class Matches extends Component {
         this.openMatchWindow = this.openMatchWindow.bind(this);
         this.sendMatchInfo = this.sendMatchInfo.bind(this);
         this.onMessage = this.onMessage.bind(this);
-
+        this.searchMatch = this.searchMatch.bind(this);
     }
 
     openMatchWindow(event) {
-        if (this.state.rounds !== undefined) {
+        if (this.state.matchWeeks !== undefined) {
             let windowTopCoord = 0;
             let topEdge = window.screenY;
             let rhsEdge = window.screenX + window.outerWidth;
@@ -32,33 +32,31 @@ class Matches extends Component {
     }
 
     componentDidMount() {
-        DAO.load();
-        if (DAO.isCompetitionRunning()) {
+        Controller.load();
+        if (Controller.isCompetitionRunning()) {
             this.setState({
-                rounds: DAO.getMatches()
+                matchWeeks: Controller.getMatchWeeks()
             });
         }
         window.addEventListener("message", this.onMessage, true);
     }
 
     renderDataTable() {
-        if (this.state.rounds !== undefined) {
-            return this.state.rounds.map((round, index) => {
-                let roundIndex = (index + 1);
-                return round.map((match, idx) => {
-                    let { home, visitor, score } = match;
-                    let matchName = `${home.name}-${visitor.name}`;
-                    let keyIndex = [roundIndex - 1, idx];
+        if (this.state.matchWeeks !== undefined) {
+            return this.state.matchWeeks.map((matchWeek, index) => {
+                return matchWeek.matches.map((match, idx) => {
+                    let { id, homeTeam, visitorTeam, result } = match;
+                    let matchName = `${homeTeam.name}-${visitorTeam.name}`;
                     let scoreStr = '';
-                    if (score !== undefined) {
-                        scoreStr = `${score[0]} - ${score[1]}`;
+                    if (result !== undefined) {
+                        scoreStr = `${result[0]} - ${result[1]}`;
                     }
                     return (
-                        <tr key={keyIndex}>
-                            <td>{roundIndex}</td>
+                        <tr key={id}>
+                            <td>{matchWeek.matchWeekNumber}</td>
                             <td>{matchName}</td>
                             <td>{scoreStr}</td>
-                            <td><input type='button' onClick={this.sendMatchInfo} value={keyIndex} style={{color: 'buttonFace', cursor: 'pointer'}}/></td>
+                            <td><input type='button' onClick={this.sendMatchInfo} value={[index, idx]} style={{ color: 'buttonFace', cursor: 'pointer' }} /></td>
                         </tr>
                     )
                 });
@@ -67,34 +65,45 @@ class Matches extends Component {
     }
 
     sendMatchInfo(event) {
-        if (this.state.rounds !== undefined) {
-            let data = event.target.value;
-            data = data.split(',');
-            data[0] = parseInt(data[0]);
-            data[1] = parseInt(data[1]);
-            let round = this.state.rounds[data[0]];
-            let match = round[data[1]];
-            let matchName = `${match.home.name}-${match.visitor.name}`;
-            let score = match.score;
+        if (this.state.matchWeeks !== undefined) {
+            let indexes = event.target.value;
+            indexes = indexes.split(',');
+            let match = this.searchMatch(indexes);
+            let matchID = match.id;
+            let matchName = `${match.homeTeam.name}-${match.visitorTeam.name}`;
+            let score = match.result;
             if (this.state.childWindow !== undefined) {
-                this.state.childWindow.postMessage(JSON.stringify({matchName, score}), '*');
+                this.state.childWindow.postMessage(JSON.stringify({ matchID, matchName, score }), '*');
             }
+        }
+    }
+
+    searchMatch(indexes) {
+        if (this.state.matchWeeks !== undefined) {
+            return this.state.matchWeeks[indexes[0]].matches[indexes[1]];
+        }
+    }
+
+    searchMatchByID(matchID) {
+        if (this.state.matchWeeks !== undefined) {
+            return this.state.matchWeeks.some(matchWeek => {
+                return matchWeek.matches.some(match => match.id === matchID);
+            });
         }
     }
 
     onMessage(event) {
         if (event.origin === "http://localhost:8082") {
-            if (this.state.rounds !== undefined) {
-
+            if (this.state.matchWeeks !== undefined) {
                 let result = JSON.parse(event.data);
-                let {matchName, score} = result;
-                this.state.rounds.map((round, index) => {
-                    return round.map((match, index) => {
-                        let name = `${match.home.name}-${match.visitor.name}`;
-                        if (matchName === name) {
-                            match.score = score;
-                            DAO.finishMatch(match.round, match.home, match.visitor, match.score);
-                            DAO.save();
+                let { matchID, matchName, score } = result;
+                score[0] = parseInt(score[0]);
+                score[1] = parseInt(score[1]);
+                this.state.matchWeeks.map((matchWeek, index) => {
+                    return matchWeek.matches.map((match, index) => {
+                        if (match.id === matchID) {
+                            match.result = score;
+                            Controller.finishMatch(matchWeek.matchWeekNumber, match.homeTeam, match.visitorTeam, match.result);
                             this.setState({
                             });
                         }
@@ -117,7 +126,7 @@ class Matches extends Component {
                     <table id="matchesTable">
                         <thead>
                             <tr>
-                                <th>Round</th>
+                                <th>Matchweek</th>
                                 <th>Match</th>
                                 <th>Score</th>
                                 <th>Action</th>
@@ -128,7 +137,7 @@ class Matches extends Component {
                         </tbody>
                     </table>
                     <br />
-                    <input type='button' onClick={this.openMatchWindow} value ='Open Match Registration Window'/>
+                    <input type='button' onClick={this.openMatchWindow} value='Open Match Registration Window' />
                 </div>
             </div>
         );

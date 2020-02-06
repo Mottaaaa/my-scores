@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { DAO } from '../scripts/DAO';
+import { Controller } from '../scripts/Controller';
+import Button from 'react-bootstrap/Button';
+import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
 
 class Home extends Component {
 
@@ -17,22 +19,22 @@ class Home extends Component {
         this.start = this.start.bind(this);
     }
 
-    edit(event){
-        DAO.resetName();
+    edit(event) {
+        Controller.resetName();
         this.setState({
             competitionName: this.state.competitionName
         });
     }
 
-    start(event){
-        DAO.initiateCompetition();
+    start(event) {
+        Controller.initiateCompetition();
         this.setState({
             competitionName: this.state.competitionName
         });
     }
 
-    reset(event){
-        DAO.reset();
+    reset(event) {
+        Controller.reset();
         this.setState({
             competitionName: ''
         });
@@ -41,10 +43,10 @@ class Home extends Component {
     handleSubmit(event) {
         event.preventDefault();
         if (this.state.competitionName !== undefined && this.state.competitionName !== '') {
-            DAO.createCompetition(this.state.competitionName);
-            DAO.save();
+            Controller.createCompetition(this.state.competitionName);
+            Controller.save();
             this.setState({
-                competitionName: DAO.getCompetition().name
+                competitionName: Controller.getCompetitionName()
             })
         }
     }
@@ -56,22 +58,28 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        DAO.load();
-        let competition = DAO.getCompetition();
+        Controller.load();
+        let competitionName = Controller.getCompetitionName();
         this.setState({
-            competitionName: competition.name || ''
+            competitionName: competitionName || ''
         });
     }
+    /*
+    <ButtonToolBar>
+                        <Button variant='outline-primary' onClick={this.start} >Start</Button>
+                    </ButtonToolBar>*/
+    /*
+        */
 
     competitionExists() {
-        let competition = DAO.getCompetition();
-        if (competition !== undefined && competition.name !== undefined && competition.name !== '') {
+        let competitionName = Controller.getCompetitionName();
+        if (competitionName !== undefined && competitionName !== '') {
             return (
-                <div>
+                <div class='container'>
                     <h2>{this.state.competitionName}</h2>
-                    <input type='button' value='Start' onClick={this.start}/>
-                    <input type='button' value='Edit' onClick={this.edit}/>
-                    <input type='button' value='Reset' onClick={this.reset}/>
+                    <input type='button' value='Start' onClick={this.start} />
+                    <input type='button' value='Edit' onClick={this.edit} />
+                    <input type='button' value='Reset' onClick={this.reset} />
                 </div>
             );
         } else {
@@ -87,12 +95,12 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
+            <div class='container'>
                 <header>
                     <h1>Welcome to My Scores</h1>
                     <h2>Your personal score manager!</h2>
                 </header>
-                <div>
+                <div class='card'>
                     {this.competitionExists()}
                 </div>
             </div>

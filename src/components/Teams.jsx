@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DAO } from '../scripts/DAO';
+import { Controller } from '../scripts/Controller';
 
 class Teams extends Component {
     constructor(props) {
@@ -20,13 +20,13 @@ class Teams extends Component {
     }
 
     componentDidMount() {
-        DAO.load();
+        Controller.load();
         this.loadTeams();
     }
 
     hideSave() {
-        DAO.load();
-        if (!DAO.isCompetitionRunning()) {
+        Controller.load();
+        if (!Controller.isCompetitionRunning()) {
             return (
                 <input type='button' onClick={this.enrollTeams} value='Save' />
             );
@@ -34,8 +34,8 @@ class Teams extends Component {
     }
 
     hideAdd() {
-        DAO.load();
-        if (!DAO.isCompetitionRunning()) {
+        Controller.load();
+        if (!Controller.isCompetitionRunning()) {
             return (
                 <form onSubmit={this.handleSubmit}>
                     <label>Team Name:</label>
@@ -47,17 +47,18 @@ class Teams extends Component {
     }
 
     loadTeams() {
+        let teams = Controller.getTeams();
         this.setState({
-            teams: DAO.getTeams() || []
+            teams: teams || []
         });
     }
 
     renderTableData() {
         if (this.state.teams !== undefined) {
             return this.state.teams.map((team, index) => {
-                const { name } = team;
+                const { id, name } = team;
                 return (
-                    <tr key={name}>
+                    <tr key={id}>
                         <td>{name}</td>
                     </tr>
                 )
@@ -83,15 +84,13 @@ class Teams extends Component {
                 teams
             });
         }
-        DAO.save();
         this.setState({
             teamName: ''
         });
     }
 
     enrollTeams() {
-        DAO.enrollTeams(this.state.teams);
-        DAO.save();
+        Controller.enrollTeams(this.state.teams);
     }
 
     render() {

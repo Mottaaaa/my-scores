@@ -3,14 +3,14 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Home from './Home';
 import Teams from './Teams';
 import Matches from './Matches';
-import { DAO } from '../scripts/DAO';
+import { Controller } from '../scripts/Controller';
 import Scoreboard from './Scoreboard';
 
 class NavBar extends Component {
 
     componentDidMount() {
-        if (DAO.getCompetition() === undefined) {
-            DAO.createCompetition('');
+        if (!Controller.competitionExists()) {
+            Controller.createCompetition('');
         }
     }
 

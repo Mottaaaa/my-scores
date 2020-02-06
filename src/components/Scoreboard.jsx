@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DAO } from '../scripts/DAO';
+import { Controller } from '../scripts/Controller';
 
 class Scoreboard extends Component {
 
@@ -13,11 +13,12 @@ class Scoreboard extends Component {
     }
 
     componentDidMount() {
-        DAO.load();
-        if (DAO.isCompetitionRunning()) {
-            let classifications = DAO.getClassification();
+        Controller.load();
+        if (Controller.isCompetitionRunning()) {
+            
+            let classifications = Controller.getClassification();
             this.setState({
-                competitionName: DAO.getCompetition().name,
+                competitionName: Controller.getCompetitionName(),
                 scores: classifications
             });
 
@@ -28,7 +29,6 @@ class Scoreboard extends Component {
 
             this.state.scores = classifications;
         }
-
     }
 
     renderDataTable() {
