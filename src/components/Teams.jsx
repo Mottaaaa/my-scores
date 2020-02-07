@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Controller } from '../scripts/Controller';
+import { Table, Button, Form, FormGroup, Label, Input, Container } from 'reactstrap';
 
 class Teams extends Component {
     constructor(props) {
@@ -28,7 +29,7 @@ class Teams extends Component {
         Controller.load();
         if (!Controller.isCompetitionRunning()) {
             return (
-                <input type='button' onClick={this.enrollTeams} value='Save' />
+                <Button color='primary' onClick={this.enrollTeams} >Save</Button>
             );
         }
     }
@@ -37,11 +38,17 @@ class Teams extends Component {
         Controller.load();
         if (!Controller.isCompetitionRunning()) {
             return (
-                <form onSubmit={this.handleSubmit}>
-                    <label>Team Name:</label>
-                    <input name='teamName' id='teamName' type='text' value={this.state.teamName} onChange={this.handleChange} />
-                    <input type='button' onClick={this.handleSubmit} value='Add Team' />
-                </form>
+                <Container>
+                    <Form onSubmit={this.handleSubmit}>
+                        <FormGroup>
+                            <Label for='teamName'>Team Name:</Label>
+                            <Input name='teamName' id='teamName' type='text' value={this.state.teamName} onChange={this.handleChange}
+                                placeholder='insert team name...' />
+                        </FormGroup>
+                        <Button style={{ marginRight: '1em' }} onClick={this.handleSubmit} color='primary'>Add Team</Button>
+                        {this.hideSave()}
+                    </Form>
+                </Container>
             );
         }
     }
@@ -95,15 +102,15 @@ class Teams extends Component {
 
     render() {
         return (
-            <div>
-                <div>
+            <Container>
+                <Container>
                     <header>
                         <h1>Teams</h1>
                     </header>
-                </div>
+                </Container>
                 {this.hideAdd()}
-                <div>
-                    <table id="teamTable">
+                <Container>
+                    <Table id="teamTable">
                         <thead>
                             <tr>
                                 <th>Team</th>
@@ -112,10 +119,9 @@ class Teams extends Component {
                         <tbody>
                             {this.renderTableData()}
                         </tbody>
-                    </table>
-                </div>
-                {this.hideSave()}
-            </div>
+                    </Table>
+                </Container>
+            </Container>
         );
     }
 }

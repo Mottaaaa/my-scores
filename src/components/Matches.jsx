@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Controller } from '../scripts/Controller';
+import { Table, Button, Container } from 'reactstrap';
 
 class Matches extends Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class Matches extends Component {
             let windowTopCoord = 0;
             let topEdge = window.screenY;
             let rhsEdge = window.screenX + window.outerWidth;
-            let win = window.open(this.state.childWindowUrl, "", "width=500, height=500" +
+            let win = window.open(this.state.childWindowUrl, "", "width=800, height=300" +
                 ", top=" + (topEdge + windowTopCoord + 2) + ", left=" + (rhsEdge + 2));
             windowTopCoord += 250;
             this.setState({
@@ -56,7 +57,7 @@ class Matches extends Component {
                             <td>{matchWeek.matchWeekNumber}</td>
                             <td>{matchName}</td>
                             <td>{scoreStr}</td>
-                            <td><input type='button' onClick={this.sendMatchInfo} value={[index, idx]} style={{ color: 'buttonFace', cursor: 'pointer' }} /></td>
+                            <td><Button onClick={this.sendMatchInfo} color='info' value={[index, idx]}>Send Data</Button></td>
                         </tr>
                     )
                 });
@@ -122,8 +123,9 @@ class Matches extends Component {
                         <h1>Matches</h1>
                     </header>
                 </div>
-                <div>
-                    <table id="matchesTable">
+                <Container>
+                    <Button onClick={this.openMatchWindow} color='primary' >Open Match Registration Window</Button>
+                    <Table id="matchesTable">
                         <thead>
                             <tr>
                                 <th>Matchweek</th>
@@ -135,10 +137,8 @@ class Matches extends Component {
                         <tbody>
                             {this.renderDataTable()}
                         </tbody>
-                    </table>
-                    <br />
-                    <input type='button' onClick={this.openMatchWindow} value='Open Match Registration Window' />
-                </div>
+                    </Table>
+                </Container>
             </div>
         );
     }

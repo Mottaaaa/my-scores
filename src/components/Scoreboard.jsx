@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Controller } from '../scripts/Controller';
+import { Table, Container } from 'reactstrap';
 
 class Scoreboard extends Component {
 
@@ -15,17 +16,12 @@ class Scoreboard extends Component {
     componentDidMount() {
         Controller.load();
         if (Controller.isCompetitionRunning()) {
-            
+
             let classifications = Controller.getClassification();
             this.setState({
                 competitionName: Controller.getCompetitionName(),
                 scores: classifications
             });
-
-            this.sectionStyle = {
-                border: '1px solid black',
-                textAlign: 'center'
-            };
 
             this.state.scores = classifications;
         }
@@ -38,17 +34,17 @@ class Scoreboard extends Component {
                     goalsDifference, points } = classification;
                 let position = (index + 1);
                 return (
-                    <tr key={team} style={this.sectionStyle}>
-                        <td style={this.sectionStyle}>{position}</td>
-                        <td style={this.sectionStyle}>{team}</td>
-                        <td style={this.sectionStyle}>{matches}</td>
-                        <td style={this.sectionStyle}>{won}</td>
-                        <td style={this.sectionStyle}>{drawn}</td>
-                        <td style={this.sectionStyle}>{lost}</td>
-                        <td style={this.sectionStyle}>{goalsFor}</td>
-                        <td style={this.sectionStyle}>{goalsAgainst}</td>
-                        <td style={this.sectionStyle}>{goalsDifference}</td>
-                        <td style={this.sectionStyle}>{points}</td>
+                    <tr key={team} >
+                        <td>{position}</td>
+                        <td>{team}</td>
+                        <td>{matches}</td>
+                        <td>{won}</td>
+                        <td>{drawn}</td>
+                        <td>{lost}</td>
+                        <td>{goalsFor}</td>
+                        <td>{goalsAgainst}</td>
+                        <td>{goalsDifference}</td>
+                        <td>{points}</td>
                     </tr>
                 );
             });
@@ -57,34 +53,34 @@ class Scoreboard extends Component {
 
     render() {
         return (
-            <div>
-                <div>
+            <Container>
+                <Container>
                     <header>
                         <h1>{this.state.competitionName} Scoreboard</h1>
                     </header>
-                </div>
-                <div>
-                    <table id="scoreboard" style={this.sectionStyle}>
+                </Container>
+                <Container>
+                    <Table id="scoreboard">
                         <thead>
-                            <tr style={this.sectionStyle}>
-                                <th style={this.sectionStyle}>Position</th>
-                                <th style={this.sectionStyle}>Team</th>
-                                <th style={this.sectionStyle}>Matches</th>
-                                <th style={this.sectionStyle}>Won</th>
-                                <th style={this.sectionStyle}>Drawn</th>
-                                <th style={this.sectionStyle}>Lost</th>
-                                <th style={this.sectionStyle}>Goals For</th>
-                                <th style={this.sectionStyle}>Goals Against</th>
-                                <th style={this.sectionStyle}>Goals Difference</th>
-                                <th style={this.sectionStyle}>Points</th>
+                            <tr>
+                                <th>Position</th>
+                                <th>Team</th>
+                                <th>Matches</th>
+                                <th>Won</th>
+                                <th>Drawn</th>
+                                <th>Lost</th>
+                                <th>Goals For</th>
+                                <th>Goals Against</th>
+                                <th>Goals Difference</th>
+                                <th>Points</th>
                             </tr>
                         </thead>
                         <tbody>
                             {this.renderDataTable()}
                         </tbody>
-                    </table>
-                </div>
-            </div>
+                    </Table>
+                </Container>
+            </Container>
         );
     }
 }

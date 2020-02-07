@@ -106,6 +106,14 @@ var Controller = (function () {
         return competition !== undefined;
     }
 
+    let saveImage = function(image){
+        DAO.saveImage(image);
+    }
+
+    let loadImage = function(){
+        return DAO.loadImage();
+    }
+
     return {
         createCompetition,
         enrollTeams,
@@ -120,7 +128,9 @@ var Controller = (function () {
         getMatchWeeks,
         getClassification,
         resetName,
-        competitionExists
+        competitionExists,
+        saveImage,
+        loadImage
     };
 })();
 
