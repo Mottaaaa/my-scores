@@ -22,7 +22,7 @@ class NavBar extends Component {
         return (
             <Container>
                 <Navbar light expand="md">
-                    <NavbarBrand href="/Home"><img src={logo} style={{height: '64px', width: '64px', borderRadius:'20px'}}></img></NavbarBrand>
+                    <NavbarBrand href="/Home"><img src={logo} alt='My Score logo' style={{height: '64px', width: '64px', borderRadius:'20px'}}></img></NavbarBrand>
                     <Nav className="mr-auto" pills>
                         <NavItem>
                             <NavLink href="/Home">Home</NavLink>
@@ -54,6 +54,9 @@ class NavBar extends Component {
                                 </Route>
                                 <Route path='/Matches'>
                                     <Matches />
+                                </Route>
+                                <Route path='/'>
+                                    <Home />
                                 </Route>
                             </Switch>
                         </Router>
